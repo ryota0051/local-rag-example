@@ -1,0 +1,13 @@
+FROM michaelf34/infinity:0.0.76
+
+ARG USER=embed_user
+
+RUN groupadd -r ${USER} && \
+    useradd -r -g ${USER} -m -d /home/${USER} ${USER}
+
+USER ${USER}
+
+# ホームディレクトリのキャッシュを使用
+ENV HF_HOME=/home/${USER}/.cache/huggingface
+
+RUN huggingface-cli download sbintuitions/sarashina-embedding-v2-1b

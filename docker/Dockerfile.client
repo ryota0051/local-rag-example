@@ -1,0 +1,26 @@
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+COPY ./requirements/requirements.client ./
+
+RUN pip install --upgrade pip && \
+    pip install --prefix=/install -r requirements.client
+
+FROM python:3.12-slim AS app
+
+RUN apt-get update && \
+    apt-get install -y curl
+
+RUN groupadd -r appuser && \
+    useradd -r -g appuser -m -d /home/appuser appuser
+
+COPY --from=builder /install /usr/local
+
+WORKDIR /app
+
+RUN chown -R appuser:appuser /app /home/appuser
+
+USER appuser
+
+CMD ["jupyter-lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--NotebookApp.token=''"]

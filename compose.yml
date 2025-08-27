@@ -1,0 +1,55 @@
+services:
+  client:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.client
+    volumes:
+      - ./:/app
+    ports:
+      - "8888:8888"
+    command: ["jupyter-lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--NotebookApp.token=''", "--NotebookApp.allow_origin='*'"]
+  chat:
+    build:
+      context: ./docker/
+      dockerfile: Dockerfile.vllm
+    image: rag-vllm:latest
+
+    command: >-
+      vllm serve Qwen/Qwen3-4B-Thinking-2507
+      --host 0.0.0.0
+      --port 8001
+      --gpu-memory-utilization 0.6
+      --max-model-len 8192
+      --reasoning-parser deepseek_r1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  embed:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.embed
+    command: >-
+      v2
+      --device cuda
+      --model-id sbintuitions/sarashina-embedding-v2-1b
+      --port 8002
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  proxy:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - chat
+      - embed

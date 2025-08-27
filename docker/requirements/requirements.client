@@ -1,0 +1,12 @@
+langchain
+langchain-core
+langchain-openai
+langchain-community
+langchain-text-splitters
+langchain-chroma==0.2.5
+pypdf
+chromadb
+jupyterlab>=4.4.1
+numpy
+pandas
+scikit-learn
