@@ -28,7 +28,9 @@ chatモデルをvLLMでサーブし、埋め込みモデルをinfinityでサー�
 
 2. `localhost:8888`にアクセスし、jupyter labにアクセス
 
-3. `notebooks/01_create_db.ipynb`を開く
+3. `notebooks/01_create_db.ipynb`を開く => ベクトルDBにデータを登録する
+
+4. `notebooks/02_rag.ipynb`開く => ベクトルDBに登録した内容をテストする
 
 ## Tips
 
